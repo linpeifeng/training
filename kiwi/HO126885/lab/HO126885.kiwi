@@ -1,0 +1,306 @@
+<image schemaversion="6.1" name="HO126885">
+    <description type="system">
+        <author>Rick Ashford</author>
+        <contact>rick.ashford@suse.com</contact>
+        <specification>SUSE Linux Enterprise 12 SP3 JeOS</specification>
+    </description>
+    <profiles>
+        <profile name="kvm" description="KVM"/>
+        <profile name="xen" description="Xen"/>
+        <profile name="vmware" description="VMware"/>
+        <profile name="container" description="Container (Docker, lxc, etc)"/>
+        <profile name="amazon" description="Amazon Web Services"/>
+        <profile name="azure" description="Microsoft Azure"/>
+        <profile name="google" description="Google"/>
+        <profile name="openstack" description="OpenStack"/>
+    </profiles>
+    <preferences>
+        <version>1.3.0</version>
+        <packagemanager>zypper</packagemanager>
+        <bootsplash-theme>SLE</bootsplash-theme>
+        <bootloader-theme>SLE</bootloader-theme>
+        <locale>en_US</locale>
+        <keytable>us.map.gz</keytable>
+        <timezone>US/Central</timezone>
+        <hwclock>utc</hwclock>
+        <rpm-excludedocs>true</rpm-excludedocs>
+        <type primary="true" boot="oemboot/suse-SLES12" bootloader="grub2" bootpartition="false" kernelcmdline="systemd.show_status=0 plythmoth.enabled=0 ramdisk_size=7340032" devicepersistency="by-label" filesystem="btrfs" image="oem" installboot="install" installiso="true" btrfs_root_is_snapshot="true">
+            <oemconfig>
+                <oem-boot-title>HO126885 Lab Image</oem-boot-title>
+                <oem-bootwait>true</oem-bootwait>
+                <oem-kiwi-initrd>true</oem-kiwi-initrd>
+                <oem-reboot>false</oem-reboot>
+                <oem-recovery>true</oem-recovery>
+                <oem-silent-boot>false</oem-silent-boot>
+                <oem-skip-verify>true</oem-skip-verify>
+                <oem-swap>true</oem-swap>
+                <oem-swapsize>1024</oem-swapsize>
+                <oem-unattended>false</oem-unattended>
+            </oemconfig>            
+            <systemdisk name="root">
+                <volume name="home"/>
+                <volume name="tmp"/>
+                <volume name="opt"/>
+                <volume name="srv"/>
+                <volume name="boot/grub2/i386-pc"/>
+                <volume name="boot/grub2/x86_64-efi" mountpoint="boot/grub2/x86_64-efi"/>
+                <volume name="var/cache"/>
+                <volume name="var/crash"/>
+                <volume name="var/lib/machines"/>
+                <volume name="var/lib/mailman"/>
+                <volume name="var/lib/named"/>
+                <volume name="var/lib/mysql"/> <!-- Requires No CoW, applied by kiwi-hook -->
+                <volume name="var/lib/mariadb"/> <!-- Requires No CoW, applied by kiwi-hook -->
+                <volume name="var/lib/pgsql"/> <!-- Requires No CoW, applied by kiwi-hook -->
+                <volume name="var/lib/libvirt/images"/> <!-- Requires No CoW, applied by kiwi-hook -->
+                <volume name="usr/local"/>
+                <volume name="var/log"/>
+                <volume name="var/opt"/>
+                <volume name="var/spool"/>
+                <volume name="var/tmp"/>
+            </systemdisk>
+            <size unit="G">24</size>
+        </type>
+    </preferences>
+    <preferences profiles="kvm">
+        <type image="vmx" filesystem="btrfs" boot="vmxboot/suse-SLES12" format="qcow2" bootloader="grub2" firmware="uefi" kernelcmdline="systemd.show_status=0 plymouth.enable=0" bootpartition="false" bootkernel="custom" devicepersistency="by-label" btrfs_root_is_snapshot="true"/>
+    </preferences> 
+    <preferences profiles="vmware">
+        <type image="vmx" filesystem="btrfs" boot="vmxboot/suse-SLES12" format="vmdk" bootloader="grub2" firmware="uefi" kernelcmdline="systemd.show_status=0 plymouth.enable=0" bootpartition="false" bootkernel="custom" devicepersistency="by-label" btrfs_root_is_snapshot="true"/>
+    </preferences>
+    <preferences profiles="container">
+        <type image="docker" container="system">
+            <machine>
+                <vmdisk/>
+                <vmnic interface="eth0" mode="veth"/>
+            </machine>
+        </type>
+    </preferences>
+    <preferences profiles="amazon">
+        <type image="vmx" filesystem="ext4" boot="vmxboot/suse-SLES12" bootloader="grub" bootprofile="ec2" bootkernel="ec2k" kernelcmdline="xencons=xvc0 console=xvc0 multipath=off" firmware="ec2" boottimeout="1" vga="normal" installprovidefailsafe="false"/>
+    </preferences>
+    <preferences profiles="azure">
+        <type image="vmx" filesystem="btrfs" boot="vmxboot/suse-SLES12" format="vmdk" bootloader="grub2" firmware="uefi" kernelcmdline="systemd.show_status=0 plymouth.enable=0" bootpartition="false" bootkernel="custom" devicepersistency="by-label" btrfs_root_is_snapshot="true"/>
+    </preferences>
+    <users group="group_name" id="number">
+        <user home="/root" id="0" name="root" password="linux" pwdformat="plain" realname="string" shell="path"/>
+    </users>    
+    <!--
+    <repository type="yast2" alias="SLES-12-SP3-x86_64" imageinclude="true">
+        <source path="nfs://192.168.130.2:/exports/SLES12-SP3-x86_64"/>
+    </repository>
+    -->
+    <repository type="yast2" alias="SLES-12-SP3-x86_64" imageinclude="false">
+        <source path="iso:///suse/iso/SLE-12-SP3-Server-DVD-x86_64-GM-DVD1.iso"/>
+    </repository>
+    <repository type="rpm-md" alias="SLES-12-SP3-Updates" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Updates/SLE-SERVER/12-SP3/x86_64/update"/>
+    </repository>
+    <repository type="rpm-md" alias="SLE-HA-12-SP3" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Products/SLE-HA/12-SP3/x86_64/product"/>
+    </repository>
+    <repository type="rpm-md" alias="SLE-HA-12-SP3-Updates" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Updates/SLE-HA/12-SP3/x86_64/update"/>
+    </repository>
+    <repository type="rpm-md" alias="SLES-12-SP3-SDK" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Products/SLE-SDK/12-SP3/x86_64/product"/>
+    </repository>
+    <repository type="rpm-md" alias="SLES-12-SP3-SDK-Updates" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Updates/SLE-SDK/12-SP3/x86_64/update"/>
+    </repository>
+    <repository type="rpm-md" alias="Public-Cloud" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Products/SLE-Module-Public-Cloud/12/x86_64/product"/>
+    </repository>
+    <repository type="rpm-md" alias="Public-Cloud-Updates" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Updates/SLE-Module-Public-Cloud/12/x86_64/update"/>
+    </repository>
+    <repository type="rpm-md" alias="Adv-Systems-Management" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Products/SLE-Module-Adv-Systems-Management/12/x86_64/product"/>
+    </repository>
+    <repository type="rpm-md" alias="Adv-Systems-Management-Updates" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Updates/SLE-Module-Adv-Systems-Management/12/x86_64/update"/>
+    </repository>
+    <repository type="rpm-md" alias="Web-Scripting" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Products/SLE-Module-Web-Scripting/12/x86_64/product"/>
+    </repository>
+    <repository type="rpm-md" alias="Web-Scripting-Updates" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Updates/SLE-Module-Web-Scripting/12/x86_64/update"/>
+    </repository>
+    <repository type="rpm-md" alias="Containers" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Products/SLE-Module-Containers/12/x86_64/product"/>
+    </repository>
+    <repository type="rpm-md" alias="Containers-Updates" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Updates/SLE-Module-Containers/12/x86_64/update"/>
+    </repository>
+    <repository type="rpm-md" alias="PackageHub-SLE-12-SP3" imageinclude="true">
+        <source path="http://192.168.124.1/repo/SUSE/Backports/SLE-12-SP3_x86_64/standard"/>
+    </repository>
+    <drivers profiles="xen">
+        <file name="drivers/xen/*"/>
+        <file name="drivers/block/xen-blkfront.ko"/>
+        <file name="drivers/net/xen-netfront.ko"/>
+        <file name="drivers/scsi/xen-scsifront.ko"/>
+        <file name="drivers/input/misc/xen-kbdfront.ko"/>
+        <file name="drivers/pci/xen-pcifront.ko"/>
+    </drivers>
+    <packages type="image">
+        <package name="patterns-sles-Minimal"/>
+        <package name="aaa_base-extras"/> <!-- wouldn't be SUSE without that ;-) -->
+        <package name="acl"/>
+        <package name="btrfsprogs"/>
+        <package name="btrfsmaintenance"/>
+        <package name="cron"/> <!-- needed by btrfsmaintenance -->
+        <package name="curl"/> <!-- needed for openQA, maybe delete -->
+        <package name="dracut"/>
+        <package name="fipscheck"/>
+        <package name="grub2-branding-SLE" bootinclude="true"/>
+        <package name="iputils"/>
+        <package name="zypper-lifecycle-plugin"/> <!-- bsc#1030278 fate#320597 -->
+        <package name="vim"/>
+        <package name="gettext-runtime"/>
+        <package name="shim" arch="x86_64"/>
+        <package name="grub2"/>
+        <package name="grub2-x86_64-efi" arch="x86_64"/>
+        <package name="fontconfig"/>
+        <package name="fonts-config"/>
+        <package name="haveged"/>
+        <package name="less"/>
+        <package name="openslp"/>
+        <package name="tar"/>
+        <package name="parted"/>
+        <package name="snapper"/>
+        <package name="SUSEConnect"/>
+        <package name="SuSEfirewall2"/>
+        <package name="systemd"/>
+        <package name="systemd-sysvinit"/>
+        <package name="timezone"/>
+        <package name="wicked"/>
+        <package name="iproute2"/> 
+        <package name="openssh"/>
+        <package name="elfutils"/>
+        <package name="kernel-default" bootinclude="true" />
+        <package name="python-base"/>
+        <package name="rsync"/>
+    	<!-- packages required by file provides, BS can't resolve them -->
+        <package name="suse-build-key"/>
+        <package name="pkg-config"/>
+        <package name="sg3_utils"/>
+        <package name="ncurses-utils"/>
+        <package name="krb5"/>
+        <package name="dialog"/>                <!-- this is needed to support simple dialogs at boot time -->
+        <package name="grub2-snapper-plugin"/>  <!-- snapper - grub2 - integration, "small" -->
+        <package name="snapper-zypp-plugin"/>   <!-- this is key snapper/zypp integration, as requested in the PRD -->
+    </packages>
+
+    <packages type="image" profiles="xen">
+        <!-- XEN specific packages -->
+        <package name="xen-tools-domU"/>
+        <package name="grub2-x86_64-xen"/>
+        <package name="xen-libs"/>
+    </packages>
+
+    <packages type="image" profiles="vmware">
+        <package name="open-vm-tools"/>
+    </packages>
+
+    <packages type="image" profiles="openstack">
+        <package name="patterns-public-cloud-OpenStack-Instance-Init"/>
+        <package name="patterns-public-cloud-OpenStack-Instance-Tools"/>
+    </packages>
+
+    <packages type="image" profiles="amazon">
+        <package name="patterns-public-cloud-Amazon-Web-Services-Instance-Init"/>
+        <package name="patterns-public-cloud-Amazon-Web-Services-Instance-Tools"/>
+        <package name="kernel-ec2"/>
+    </packages>
+
+    <packages type="image" profiles="google">
+        <package name="patterns-public-cloud-Google-Cloud-Platform-Instance-Init"/>
+        <package name="patterns-public-cloud-Google-Cloud-Platform-Instance-Tools"/>
+    </packages>
+
+    <packages type="image" profiles="azure">
+        <package name="patterns-public-cloud-Microsoft-Azure-Instance-Init"/>
+        <package name="patterns-public-cloud-Microsoft-Azure-Instance-Tools"/>
+    </packages>
+
+    <packages type="bootstrap">
+        <package name="udev"/>
+        <package name="filesystem"/>
+        <package name="glibc-locale"/>
+        <package name="cracklib-dict-full"/>
+        <package name="ca-certificates"/>
+        <package name="sles-release"/>
+        <package name="sles-release-DVD"/>
+    </packages>
+    <packages type="delete">
+        <package name="mtools"/>
+        <package name="initviocons"/>
+        <package name="cryptsetup"/>
+        <package name="autoyast2-installation"/>
+        <package name="bind-utils"/>
+        <package name="Mesa"/>
+        <package name="Mesa-libGL1"/>
+        <package name="Mesa-libglapi0"/>
+        <package name="Mesa-EGL1"/>
+        <package name="Mesa-libEGL1"/>
+        <package name="lvm2"/>
+        <package name="sg3_utils"/>
+        <package name="libcairo2"/>
+        <package name="libxcb-dri2-0"/>
+        <package name="libxcb-dri3-0"/>
+        <package name="libgbm1"/>
+        <package name="libgio-2_0-0"/>
+        <package name="libharfbuzz0"/>
+        <package name="libpango-1_0-0"/>
+        <package name="libpixman-1-0"/>
+        <package name="libply-splash-graphics2"/>
+        <package name="libX11-6"/>
+        <package name="libX11-xcb1"/>
+        <package name="libxcb-dri3"/>
+        <package name="libxcb-present0"/>
+        <package name="libxcb-shm0"/>
+        <package name="libxcb-xfixes0"/>
+        <package name="libdrm_intel1"/>
+        <package name="libdrm_nouveau2"/>
+        <package name="libLLVM"/>
+        <package name="libyui7"/>
+        <package name="libyui-ncurses-pkg7"/>
+        <package name="libyui-ncurses7"/>
+        <package name="libthai0"/>
+        <package name="libwayland-client0"/>
+        <package name="libsgutils2"/>
+        <package name="libpciaccess0"/>
+        <package name="libgraphite2"/>
+        <package name="libdatrie1"/>
+        <package name="libdrm2"/>
+        <package name="libxcb1"/>
+        <package name="libX11-data"/>
+        <package name="libXdamage1"/>
+        <package name="libXext6"/>
+        <package name="libXfixes3"/>
+        <package name="libXft2"/>
+        <package name="libXrender1"/>
+        <package name="libXxf86vm1"/>
+        <package name="libpng16-16"/>
+        <package name="os-prober"/>
+        <package name="pango-modules"/>
+        <package name="plymouth"/>
+        <package name="plymouth-plugin-label"/>
+        <package name="plymouth-plugin-script"/>
+        <package name="plymouth-scripts"/>
+        <package name="plymouth-branding-SLE"/>
+        <package name="fontconfig"/>
+        <package name="fonts-config"/>
+        <package name="gnu-unifont-bitmap-fonts"/>
+        <package name="gio-branding-upstream"/>
+        <package name="libXau6"/>
+        <package name="libfreetype6"/>
+        <package name="shared-mime-info"/>
+    </packages>
+    <packages type="delete" profiles="container,amazon">
+        <package name="kernel-default"/>
+    </packages>
+
+</image>
+

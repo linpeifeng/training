@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+
+import subprocess
+import shlex
+import rpm
+import re
+import argparse
+from lxml import etree
+
+parser = argparse.ArgumentParser(description='Parse a kiwi file and strip packages that are part of installed patterns')
+parser.add_argument("filename",metavar="<file>",nargs='+',help="Kiwi XML file to parse")
+args = parser.parse_args()
+
+
+def checkDeps(package_name,is_pattern=False):
+    if is_pattern:
+        install = "install -t pattern"
+    else:
+        install = "install -t package"
+    cmd = "/usr/bin/zypper -x --non-interactive --no-refresh --disable-system-resolvables %s -D %s" %  (install,package_name)
+    try:
+        cmd_output = subprocess.check_output(cmd,stderr=subprocess.STDOUT,shell=True)
+    except subprocess.CalledProcessError:
+        cmd_output = ""
+    return etree.fromstring(cmd_output)
+
+    
+
+doc = etree.parse(args.filename[0])
+
+for package_type in doc.findall("packages"):
+    for package in package_type.getchildren():
+        name = str(package.attrib.get("name"))
+        solvables = etree.fromstring("<xml/>")
+        if package.tag == "namedCollection":
+            solvables = checkDeps(name,True)
+        else:
+            rgx_match = re.compile(r"^patterns*")
+            if rgx_match.search(name):
+                solvables = checkDeps(name)
+
+        for solvable in solvables.iter("solvable"):
+            if solvable.attrib.get("type") == "package":
+                #print "TYPE=%s PACKAGE=%s" % (package_type.attrib.get("type"),solvable.attrib.get("name"))
+                etree.strip_elements(package_type,package,with_tail=True)
+
+print etree.tostring(doc,pretty_print=True)
+
+

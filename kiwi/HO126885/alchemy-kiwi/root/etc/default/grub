@@ -1,0 +1,14 @@
+GRUB_DISTRIBUTOR=SLES12-SP3-JeOS-for-kvm-and-xen\ \[\ VMX\ \]
+GRUB_DEFAULT=0
+GRUB_HIDDEN_TIMEOUT=0
+GRUB_HIDDEN_TIMEOUT_QUIET=true
+GRUB_TIMEOUT=10
+GRUB_CMDLINE_LINUX=" root=/dev/disk/by-label/ROOT disk=/dev/vda resume=swap systemd.show_status=0 plymouth.enable=0 quiet"
+GRUB_TERMINAL=gfxterm
+GRUB_USE_LINUXEFI=true
+GRUB_USE_INITRDEFI=true
+GRUB_GFXMODE=800x600
+GRUB_GFXPAYLOAD_LINUX=keep
+GRUB_THEME="/boot/grub2/themes/SLE/theme.txt"
+GRUB_BACKGROUND="/boot/grub2/themes/SLE/background.png"
+SUSE_BTRFS_SNAPSHOT_BOOTING=true
